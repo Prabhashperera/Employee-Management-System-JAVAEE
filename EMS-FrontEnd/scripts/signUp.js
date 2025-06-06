@@ -49,13 +49,19 @@ $(".btn-login").click(() => {
 
     $.ajax({
         url: "http://localhost:8080/EMS/signin",
-        method: "GET",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({email: email, password: password}),
         success: function(resp) {
-            resp.map((data) => {
-                if(data.email === email && data.password === password) {
-                    window.location.href = "index.html";
-                }
-            })
+            if(resp === "Success") {
+                window.location.href = 'index.html'
+            }else{
+            Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "User Credencials are wrong!",
+            });
+            }
         }
     })
 });
