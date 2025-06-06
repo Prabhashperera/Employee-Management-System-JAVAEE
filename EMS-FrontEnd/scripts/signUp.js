@@ -22,10 +22,20 @@ $(".btn-signup").click(function (e) {
         contentType: "application/json",
         data: JSON.stringify(userData),
         success: function () {
-            alert("Account created successfully! 🎉");
+            Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Successfully Saved!",
+            });
+
         },
         error: function (err) {
-            console.error("Oops! Something went wrong 😢", err);
+            Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+            });
+
         }
     });
 });
