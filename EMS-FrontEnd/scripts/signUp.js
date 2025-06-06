@@ -40,3 +40,23 @@ $(".btn-signup").click(function (e) {
     });
 });
 
+// Login
+
+$(".btn-login").click(() => {
+
+    let email = $(".email").val();
+    let password = $(".password").val();
+
+    $.ajax({
+        url: "http://localhost:8080/EMS/signin",
+        method: "GET",
+        success: function(resp) {
+            resp.map((data) => {
+                if(data.email === email && data.password === password) {
+                    window.location.href = "index.html";
+                }
+            })
+        }
+    })
+});
+

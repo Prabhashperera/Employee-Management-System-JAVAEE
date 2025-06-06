@@ -28,6 +28,8 @@ public class SignInServlet extends HttpServlet {
             PreparedStatement ps = ds.getConnection().prepareStatement("SELECT * FROM userTable");
             ResultSet rs = ps.executeQuery();
             List<Map<String, String>> userList = new ArrayList<>();
+
+
             while (rs.next()) {
                 Map<String, String> user = new HashMap<>();
                 user.put("name", rs.getString("name"));
