@@ -9,43 +9,42 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import javax.sql.DataSource;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/signup")
+@WebServlet("/signin")
 public class SignInServlet extends HttpServlet {
     @Resource(name = "java:comp/env/jdbc/pool")
     private DataSource ds;
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            PreparedStatement ps = ds.getConnection().prepareStatement("SELECT * FROM userTable");
+            ResultSet rs = ps.executeQuery();
+            List<Map<String, String>> userList = new ArrayList<>();
+            while (rs.next()) {
+                Map<String, String> user = new HashMap<>();
+                user.put("name", rs.getString("name"));
+                user.put("email", rs.getString("email"));
+                user.put("password", rs.getString("password"));
+                user.put("phone", rs.getString("phone"));
+                userList.add(user);
+            }
 
-            BufferedReader reader = req.getReader();
+            System.out.println("User List " + userList);
+
+            resp.setContentType("application/json");
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, String> userData = mapper.readValue(reader, Map.class);
-            System.out.println(userData);
-            Connection connection = ds.getConnection();
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO userTable VALUES (?,?,?,?)");
-            ps.setString(1, userData.get("email"));
-            ps.setString(2, userData.get("name"));
-            ps.setString(3, userData.get("password"));
-            ps.setString(4, userData.get("phone"));
-            int i = ps.executeUpdate();
-            System.out.println("Insereted " + i + " rows into database");
+            mapper.writeValue(resp.getWriter(), userList);
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
-
 }
